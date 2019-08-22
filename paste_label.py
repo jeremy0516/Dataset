@@ -26,33 +26,28 @@ cnt = 0
 print("[INFO] Start processing image...")
 for bac_image_path in bac_image_Path:
 	bac = Image.open(bac_image_path)
-	w_bac, h_bac = bac.size
+	w_bac, h_bac = bac.size		#	256*256
 
 	lab_image_path = random.choice(lab_image_Path)
 	label = Image.open(lab_image_path)
-	w_lab, h_lab = label.size	
-
-	# randomly change the color of letter
-		
+	w_lab, h_lab = label.size
 			
-	# randomly resize the letter
-	w_re = random.randint(40, 160)
-	h_re = random.randint(30, 120)
-	label = label.resize((w_re, h_re))
+	# resize the letter to（128, 128）
+	label = label.resize((128, 128))
 	w_re, h_re = label.size
 
 	# paste the letter on background in random location
-	x = random.randint(0, w_bac-w_re)
-	y = random.randint(0, h_bac-h_re)
+	loc = [(0,0), (128, 0), (0, 128), (128, 128)]
+	x,y = loc[random.randint(0, 3)]
 	label.thumbnail((w_re, h_re))
-	bac.paste(label,(x, y), label)		
+	bac.paste(label,(x, y))		
 	
 	# save image
 	cnt += 1
 	bac.save("dataset/" + str(cnt) + ".png", format = "png")		
 
 	# record the letters' size & their origin coordinate
-	let = [w_re/256, h_re/256, x/256, y/256]
+	let = [(x+64)/256, (y+64)/256]
 	labels.append(let)
 
 	# record the image size
@@ -69,13 +64,13 @@ for bac_image_path in bac_image_Path:
 		letter_list.append(1)
 	labels_letter.append(letter_list[-26:])	
 
-# print(labels)
-# data = np.array(data)
-# print(data.shape)
-# print(labels_letter[0])
-# print(labels_letter[1])
-# print(labels_letter[2])
-# print(labels_letter[3])
+print(labels)
+data = np.array(data)
+print(data.shape)
+print(labels_letter[0])
+print(labels_letter[1])
+print(labels_letter[2])
+print(labels_letter[3])
 
 print("[INFO] Finish processing...")
 
